@@ -183,10 +183,9 @@ def render_bar(x, y, total_width, name, value, maximum, bar_color, back_color):
 
 def get_names_under_mouse():
 	#return a string with the names of all objects under the mouse
-	libtcod.console_flush()
+	#libtcod.console_flush()
 	libtcod.sys_check_for_event(libtcod.EVENT_ANY, key_event_structure, mouse_event_structure)
 	(x, y) = (mouse_event_structure.cx, mouse_event_structure.cy)
-	print x, y
 
 	#create a list with the names of all objects at the mouse's coordinates and in FOV
 	objects = []

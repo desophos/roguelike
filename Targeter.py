@@ -39,7 +39,7 @@ class Targeter:
 		# return the position of a tile left-clicked in player's FOV (optionally in a range), or None if right-clicked.
 		#display.message("Click a tile to target.")
 		while True:
-			libtcod.console_flush()
+			#libtcod.console_flush()
 			libtcod.sys_check_for_event(libtcod.EVENT_ANY, key_event_structure, mouse_event_structure)
 			# render the screen. this erases the inventory and shows the names of objects under the mouse.
 			display.render_all()
