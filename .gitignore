@@ -1,6 +1,8 @@
 *.py[cod]
-libtcod*
+libtcodpy.py
+libtcod.so
 *.png
+.metadata
 
 # C extensions
 *.so
