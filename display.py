@@ -191,8 +191,9 @@ def render_bar(x, y, total_width, name, value, maximum, bar_color, back_color):
 def get_names_under_mouse():
     # return a string with the names of all objects under the mouse
     #libtcod.console_flush()
-    libtcod.sys_check_for_event(libtcod.EVENT_ANY, key_event_structure, mouse_event_structure)
-    (x, y) = (mouse_event_structure.cx, mouse_event_structure.cy)
+    libtcod.sys_check_for_event(libtcod.EVENT_MOUSE_MOVE, g.key_event_structure, g.mouse_event_structure)
+    (x, y) = (g.mouse_event_structure.cx, g.mouse_event_structure.cy)
+    print x, y
 
     # create a list with the names of all objects at the mouse's coordinates and in FOV
     objects = []
@@ -203,7 +204,8 @@ def get_names_under_mouse():
     names = []
     names.extend(
         [obj.name for obj in objects
-         if obj.x == x and obj.y == y and libtcod.map_is_in_fov(fov_map, obj.x, obj.y)]
+         if obj.x == x and obj.y == y
+         and libtcod.map_is_in_fov(fov_map, obj.x, obj.y)]
     )
 
     names = ', '.join(names)  # join the names, separated by commas
@@ -227,22 +229,22 @@ def render_all():
     import Object
 
     if g.fov_recompute:
-        #recompute FOV if needed (the player moved or something)
+        # recompute FOV if needed (the player moved or something)
         g.fov_recompute = False
         libtcod.map_compute_fov(fov_map, Object.player.x, Object.player.y, TORCH_RADIUS, FOV_LIGHT_WALLS, FOV_ALGO)
 
-        #go through all tiles, and set their background color according to the FOV
+        # go through all tiles, and set their background color according to the FOV
         for y in range(MAP_HEIGHT):
             for x in range(MAP_WIDTH):
                 visible = libtcod.map_is_in_fov(fov_map, x, y)
                 if not visible:
-                    #if it's not visible right now, the player can only see it if it's explored
+                    # if it's not visible right now, the player can only see it if it's explored
                     if g.level_map[y][x].explored:
                         libtcod.console_set_char_background(con, x, y, g.level_map[y][x].color_out_FOV, libtcod.BKGND_SET)
                 else:
-                    #it's visible
+                    # it's visible
                     libtcod.console_set_char_background(con, x, y, g.level_map[y][x].color_in_FOV, libtcod.BKGND_SET)
-                    #since it's visible, explore it
+                    # since it's visible, explore it
                     g.level_map[y][x].explored = True
 
     # draw everything, starting with things most in the background
@@ -255,36 +257,36 @@ def render_all():
             actor.draw()
     Object.player.draw()
 
-    #blit the contents of "con" to the root console
+    # blit the contents of "con" to the root console
     libtcod.console_blit(con, 0, 0, MAP_WIDTH, MAP_HEIGHT, 0, 0, 0)
 
-    #prepare to render the GUI panel
+    # prepare to render the GUI panel
     libtcod.console_set_default_background(panel, libtcod.black)
     libtcod.console_clear(panel)
 
-    #print the game messages, one line at a time
+    # print the game messages, one line at a time
     y = 1
     for (line, color) in g.game_msgs:
         libtcod.console_set_default_foreground(panel, color)
         libtcod.console_print(panel, MSG_X, y, line)
         y += 1
 
-    #show the player's stats
+    # show the player's stats
     render_bar(1, 1, BAR_WIDTH, 'HP', Object.player.combatant.hp, Object.player.combatant.max_hp,  # @UndefinedVariable
                libtcod.light_red, libtcod.darker_red)
     render_bar(1, 2, BAR_WIDTH, 'MP', Object.player.caster.mp, Object.player.caster.max_mp,  # @UndefinedVariable
                libtcod.light_blue, libtcod.darker_blue)
 
-    #display names of objects under the mouse
+    # display names of objects under the mouse
     libtcod.console_set_default_foreground(panel, libtcod.light_gray)
     libtcod.console_print(panel, 1, 0, get_names_under_mouse())
 
-    #blit the contents of "panel" to the root console
+    # blit the contents of "panel" to the root console
     libtcod.console_blit(panel, 0, 0, SCREEN_WIDTH, PANEL_HEIGHT, 0, 0, PANEL_Y)
 
     libtcod.console_flush()
 
-    #erase all actors at their old locations
+    # erase all actors at their old locations
     for actor in g.actors:
         actor.clear()
 
@@ -293,8 +295,6 @@ libtcod.console_init_root(SCREEN_WIDTH, SCREEN_HEIGHT, 'python/libtcod roguelike
 libtcod.sys_set_fps(LIMIT_FPS)
 con = libtcod.console_new(MAP_WIDTH, MAP_HEIGHT)
 panel = libtcod.console_new(SCREEN_WIDTH, PANEL_HEIGHT)
-mouse_event_structure = libtcod.Mouse()
-key_event_structure = libtcod.Key()
 
-#create the FOV map, according to the generated map and its objects
+# create the FOV map, according to the generated map and its objects
 fov_map = libtcod.map_new(MAP_WIDTH, MAP_HEIGHT)

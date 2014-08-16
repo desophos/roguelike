@@ -1,3 +1,5 @@
+import libtcodpy as libtcod
+
 #map of the current level
 level_map = []
 #all actors
@@ -11,3 +13,7 @@ game_msgs = []
 
 fov_recompute = True
 game_state = "playing"
+
+# libtcod event holders
+key_event_structure = libtcod.Key()
+mouse_event_structure = libtcod.Mouse()

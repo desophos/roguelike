@@ -41,17 +41,17 @@ class Targeter:
         #display.message("Click a tile to target.")
         while True:
             #libtcod.console_flush()
-            libtcod.sys_check_for_event(libtcod.EVENT_ANY, key_event_structure, mouse_event_structure)
+            libtcod.sys_check_for_event(libtcod.EVENT_ANY, g.key_event_structure, g.mouse_event_structure)
             # render the screen. this erases the inventory and shows the names of objects under the mouse.
             display.render_all()
 
-            (x, y) = (mouse_event_structure.cx, mouse_event_structure.cy)
+            (x, y) = (g.mouse_event_structure.cx, g.mouse_event_structure.cy)
 
-            if mouse_event_structure.rbutton_pressed or key_event_structure.vk == libtcod.KEY_ESCAPE:
+            if g.mouse_event_structure.rbutton_pressed or g.key_event_structure.vk == libtcod.KEY_ESCAPE:
                 return None  # cancel if the player right-clicked or pressed Escape
 
             #accept the target if the player clicked in FOV, and in case a range is specified, if it's in that range
-            if mouse_event_structure.lbutton_pressed:
+            if g.mouse_event_structure.lbutton_pressed:
                 if libtcod.map_is_in_fov(display.fov_map, x, y) and (self.max_range is None or self.owner.distance(x, y) <= self.max_range):
                     return (x, y)
                 else:
@@ -75,6 +75,3 @@ class Targeter:
 
     def target_self(self):
         return self.owner
-
-key_event_structure = libtcod.Key()
-mouse_event_structure = libtcod.Mouse()

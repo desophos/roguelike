@@ -8,8 +8,8 @@ import math
 
 
 class Object:
-    #this is a generic object: the player, a monster, an item, the stairs...
-    #it's always represented by a character on screen.
+    # this is a generic object: the player, a monster, an item, the stairs...
+    # it's always represented by a character on screen.
     def __init__(self, x, y, char, name, color, blocks=False, blocks_sight=False):
         self.x = x
         self.y = y
@@ -51,27 +51,27 @@ class Object:
         return not move_blocked
 
     def move_towards(self, target_x, target_y):
-        #vector from this object to the target, and distance
+        # vector from this object to the target, and distance
         dx = target_x - self.x
         dy = target_y - self.y
         distance = math.sqrt(dx ** 2 + dy ** 2)
 
-        #normalize it to length 1 (preserving direction), then round it and
-        #convert to integer so the movement is restricted to the map grid
+        # normalize it to length 1 (preserving direction), then round it and
+        # convert to integer so the movement is restricted to the map grid
         dx = int(round(dx / distance))
         dy = int(round(dy / distance))
         self.move(dx, dy)
 
     def distance_to(self, other):
-        #return the distance to another object
+        # return the distance to another object
         return self.distance(other.x, other.y)
 
     def distance(self, x, y):
-        #return the distance to some coordinates
+        # return the distance to some coordinates
         return math.sqrt((x - self.x) ** 2 + (y - self.y) ** 2)
 
     def send_to_back(self):
-        #make this object be drawn first, so all others appear above it if they're in the same tile.
+        # make this object be drawn first, so all others appear above it if they're in the same tile.
         if self in g.actors:
             g.actors.remove(self)
             g.actors.insert(0, self)
@@ -80,14 +80,14 @@ class Object:
             g.items.insert(0, self)
 
     def draw(self):
-        #only show if it's visible to the player
+        # only show if it's visible to the player
         if libtcod.map_is_in_fov(display.fov_map, self.x, self.y):
-            #set the color and then draw the character that represents this object at its position
+            # set the color and then draw the character that represents this object at its position
             libtcod.console_set_default_foreground(display.con, self.color)
             libtcod.console_put_char(display.con, self.x, self.y, self.char, libtcod.BKGND_NONE)
 
     def clear(self):
-        #erase the character that represents this object
+        # erase the character that represents this object
         libtcod.console_put_char(display.con, self.x, self.y, ' ', libtcod.BKGND_NONE)
 
 
@@ -150,8 +150,8 @@ class NPC(Character):
         Character.__init__(self, x=x, y=y, char=char, name=name, color=color, level=level, xp=xp, xp_curve=xp_curve, blocks=blocks, blocks_sight=blocks_sight, speed=speed, inventory=inventory, skills=skills, combatant=combatant, caster=caster, ai=ai)
 
     def death(self, killer):
-        #transform it into a nasty corpse! it doesn't block, can't be
-        #attacked and doesn't move
+        # transform it into a nasty corpse!
+        # it doesn't block, can't be attacked and doesn't move
         Combatant.death(self.combatant, killer)
         self.char = '%'
         self.color = libtcod.dark_red
@@ -182,27 +182,27 @@ class Player(Character):
         Character.level_up(self)
 
     def death(self):
-        #the game ended!
+        # the game ended!
         message('You died!', libtcod.red)
         g.game_state = 'dead'
 
-        #for added effect, transform the player into a corpse!
+        # for added effect, transform the player into a corpse!
         self.char = '%'
         self.color = libtcod.dark_red
 
     def move_or_attack(self, dx, dy):
-        #the coordinates the player is moving to/attacking
+        # the coordinates the player is moving to/attacking
         x = self.x + dx
         y = self.y + dy
 
-        #try to find an attackable object there
+        # try to find an attackable object there
         target = None
         for actor in g.actors:
             if actor.combatant and actor.x == x and actor.y == y:
                 target = actor
                 break
 
-        #attack if target found, move otherwise
+        # attack if target found, move otherwise
         if target:
             self.combatant.attack(target)
             return True
@@ -218,20 +218,20 @@ class Player(Character):
         'exit': exit game
         """
         libtcod.console_flush()
-        libtcod.sys_check_for_event(libtcod.EVENT_ANY, key_event_structure, mouse_event_structure)
+        libtcod.sys_check_for_event(libtcod.EVENT_MOUSE | libtcod.EVENT_KEY_PRESS, g.key_event_structure, g.mouse_event_structure)
 
-        if key_event_structure.vk == libtcod.KEY_ENTER and key_event_structure.lalt:
-            #Alt+Enter: toggle fullscreen
+        if g.key_event_structure.vk == libtcod.KEY_ENTER and g.key_event_structure.lalt:
+            # Alt+Enter: toggle fullscreen
             libtcod.console_set_fullscreen(not libtcod.console_is_fullscreen())
 
-        elif key_event_structure.vk == libtcod.KEY_ESCAPE:
+        elif g.key_event_structure.vk == libtcod.KEY_ESCAPE:
             return 'exit'  # exit game
 
         def switch_key(keys):
-            return key_event_structure.vk in keys
+            return g.key_event_structure.vk in keys
 
         if g.game_state is not 'dead':
-            #movement keys
+            # movement keys
             up = [libtcod.KEY_UP, libtcod.KEY_KP8]
             upleft = [libtcod.KEY_KP7]
             left = [libtcod.KEY_LEFT, libtcod.KEY_KP4]
@@ -240,7 +240,8 @@ class Player(Character):
             downright = [libtcod.KEY_KP3]
             right = [libtcod.KEY_RIGHT, libtcod.KEY_KP6]
             upright = [libtcod.KEY_KP9]
-            #other keys
+
+            # other keys
             pickup_key = ['g', ',']
             inventory_key = ['I']
             spellbook_key = ['B']
@@ -255,17 +256,17 @@ class Player(Character):
                     print "You're held in place; you can't move."
                     return False  # trying to move shouldn't take a turn if it fails
 
-                if switch_key(up):          return self.move_or_attack(0, -1)
+                if   switch_key(up):        return self.move_or_attack( 0, -1)
                 elif switch_key(upleft):    return self.move_or_attack(-1, -1)
-                elif switch_key(left):      return self.move_or_attack(-1, 0)
-                elif switch_key(downleft):  return self.move_or_attack(-1, 1)
-                elif switch_key(down):      return self.move_or_attack(0, 1)
-                elif switch_key(downright): return self.move_or_attack(1, 1)
-                elif switch_key(right):     return self.move_or_attack(1, 0)
-                elif switch_key(upright):   return self.move_or_attack(1, -1)
+                elif switch_key(left):      return self.move_or_attack(-1,  0)
+                elif switch_key(downleft):  return self.move_or_attack(-1,  1)
+                elif switch_key(down):      return self.move_or_attack( 0,  1)
+                elif switch_key(downright): return self.move_or_attack( 1,  1)
+                elif switch_key(right):     return self.move_or_attack( 1,  0)
+                elif switch_key(upright):   return self.move_or_attack( 1, -1)
             else:
                 # test for other keys
-                key_char = chr(key_event_structure.c)
+                key_char = chr(g.key_event_structure.c)
 
                 if key_char in pickup_key:
                     # pick up an item
@@ -298,7 +299,7 @@ class Player(Character):
                             return True
 
                 if key_char in drop_key:
-                    #show the inventory; if an item is selected, drop it
+                    # show the inventory; if an item is selected, drop it
                     chosen_item = self.inventory.choice_menu(key_char)
                     if chosen_item is not None:
                         chosen_item.drop()
@@ -307,7 +308,7 @@ class Player(Character):
                     # show the character screen
                     display.char_info_window(self)
                     # wait for keypress
-                    libtcod.sys_wait_for_event(libtcod.KEY_PRESSED, key_event_structure, mouse_event_structure, True)
+                    libtcod.sys_wait_for_event(libtcod.KEY_PRESSED, g.key_event_structure, g.mouse_event_structure, True)
 
                 return False
 
@@ -413,7 +414,7 @@ class Caster:
 
 
 def is_blocked(x, y):
-    #first test the map tile
+    # first test the map tile
     if g.level_map[y][x].blocked:
         return True
 
@@ -422,7 +423,7 @@ def is_blocked(x, y):
     objects.extend(g.items)
     objects.extend(g.terrain_features)
 
-    #then check everything in the tile
+    # then check everything in the tile
     for obj in objects:
         if obj.blocks and obj.x == x and obj.y == y:
             return True
@@ -431,12 +432,10 @@ def is_blocked(x, y):
 
 
 def calc_aspect(hot_cold, wet_dry):
-    if hot_cold > 0 and wet_dry > 0:   return aspects[AIR]    # hot and wet
+    if   hot_cold > 0 and wet_dry > 0: return aspects[AIR]    # hot and wet
     elif hot_cold < 0 and wet_dry < 0: return aspects[FIRE]   # hot and dry
     elif hot_cold < 0 and wet_dry > 0: return aspects[WATER]  # cold and wet
     elif hot_cold > 0 and wet_dry < 0: return aspects[EARTH]  # cold and dry
     else:                              return None
 
 player = Player(0, 0)
-key_event_structure = libtcod.Key()
-mouse_event_structure = libtcod.Mouse()
