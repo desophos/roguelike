@@ -12,9 +12,9 @@ element-based: fire, water, earth, air
 Elements are "Aspects" of nature.
 Hotness/coldness and wetness/dryness are "Factors" of Aspects.
 Terrain-based:
-	e.g. standing in water enables certain water-based spells, empowers others
-	Casters can absorb energy from the terrain around them to alter their Factors
-	Able to change environment to suit your needs
+    e.g. standing in water enables certain water-based spells, empowers others
+    Casters can absorb energy from the terrain around them to alter their Factors
+    Able to change environment to suit your needs
 Using a spell of a certain aspect raises the user's proficiency in the factors of that aspect.
 This encourages specialization without removing choice.
 Player takes a personality test to determine their initial Factors, which determine their initial Aspect.
@@ -36,11 +36,11 @@ water: cohesion/*fluidity*
 air: expansion/vibration/*mobility*
 fire: heat/*energy content*
 
-Humour		Season	Element	Organ		Qualities	Ancient name	Modern		MBTI	Ancient characteristics
-Blood		spring	air		liver		warm & wet	sanguine		artisan		SP		courageous, hopeful, amorous
-Yellow bile	summer	fire	gallbladder	warm & dry	choleric		idealist	NF		easily angered, bad tempered
-Black bile	autumn	earth	spleen		cold & dry	melancholic		guardian	SJ		despondent, sleepless, irritable
-Phlegm		winter	water	brain/lungs	cold & wet	phlegmatic		rational	NT		calm, unemotional
+Humour      Season  Element Organ       Qualities   Ancient name    Modern      MBTI    Ancient characteristics
+Blood       spring  air     liver       warm & wet  sanguine        artisan     SP      courageous, hopeful, amorous
+Yellow bile summer  fire    gallbladder warm & dry  choleric        idealist    NF      easily angered, bad tempered
+Black bile  autumn  earth   spleen      cold & dry  melancholic     guardian    SJ      despondent, sleepless, irritable
+Phlegm      winter  water   brain/lungs cold & wet  phlegmatic      rational    NT      calm, unemotional
 
 Historically, bodily problems were caused by an imbalance of the humours.
 However, an imbalance of the humours is required for magic.
@@ -55,11 +55,11 @@ http://en.wikipedia.org/wiki/Keirsey_Temperament_Sorter
 """
 """ASPECT COORDINATES:
 
-FIRE	HOT		AIR
-		 |
+FIRE    HOT     AIR
+         |
 DRY -----|----- WET
-		 |
-EARTH	COLD	WATER
+         |
+EARTH   COLD    WATER
 
 Opposite pairs: fire/water, air/earth.
 This forces exclusion of only one Aspect.
@@ -127,17 +127,18 @@ FEATURES TO IMPLEMENT:
 **Multiple dungeon levels
 """
 
+
 def generate_map(which_kind):
-	import map_generator
-	if which_kind == "forest":
-		map_generator.generate_forest()
-		map_generator.generate_river()
-		starting_point = (MAP_WIDTH/2, MAP_HEIGHT/2)
-		room = map_generator.Room(0, 0, MAP_WIDTH - 1, MAP_HEIGHT - 1)
-		map_generator.place_objects(room)
-	elif which_kind == "dungeon":
-		starting_point = map_generator.generate_dungeon()
-	return starting_point
+    import map_generator
+    if which_kind == "forest":
+        map_generator.generate_forest()
+        map_generator.generate_river()
+        starting_point = (MAP_WIDTH/2, MAP_HEIGHT/2)
+        room = map_generator.Room(0, 0, MAP_WIDTH - 1, MAP_HEIGHT - 1)
+        map_generator.place_objects(room)
+    elif which_kind == "dungeon":
+        starting_point = map_generator.generate_dungeon()
+    return starting_point
 
 ##################
 # INITIALIZATION #
@@ -149,8 +150,8 @@ g.actors.append(Object.player)
 # generate map (at this point it's not drawn to the screen)
 starting_point = generate_map("dungeon")
 
-Object.player.x = starting_point[0] #MAP_WIDTH / 2
-Object.player.y = starting_point[1] #MAP_HEIGHT / 2
+Object.player.x = starting_point[0]  # MAP_WIDTH / 2
+Object.player.y = starting_point[1]  # MAP_HEIGHT / 2
 
 block_map = [[False for x in range(MAP_WIDTH)] for y in range(MAP_HEIGHT)]
 block_sight_map = [[False for x in range(MAP_WIDTH)] for y in range(MAP_HEIGHT)]
@@ -161,14 +162,18 @@ objects.extend(g.items)
 objects.extend(g.terrain_features)
 
 for y in range(MAP_HEIGHT):
-	for x in range(MAP_WIDTH):
-		for obj in objects:
-			if obj.x == x and obj.y == y:
-				if obj.blocks: block_map[y][x] = True
-				if obj.blocks_sight: block_sight_map[y][x] = True
-		if g.level_map[y][x].blocked: block_map[y][x] = True
-		if g.level_map[y][x].block_sight: block_sight_map[y][x] = True
-		libtcod.map_set_properties(display.fov_map, x, y, not block_sight_map[y][x], not block_map[y][x])
+    for x in range(MAP_WIDTH):
+        for obj in objects:
+            if obj.x == x and obj.y == y:
+                if obj.blocks:
+                    block_map[y][x] = True
+                if obj.blocks_sight:
+                    block_sight_map[y][x] = True
+        if g.level_map[y][x].blocked:
+            block_map[y][x] = True
+        if g.level_map[y][x].block_sight:
+            block_sight_map[y][x] = True
+        libtcod.map_set_properties(display.fov_map, x, y, not block_sight_map[y][x], not block_map[y][x])
 
 g.fov_recompute = True
 
@@ -186,9 +191,10 @@ display.message('spellbook: B, abilities: a', libtcod.red)
 #############
 
 while not libtcod.console_is_window_closed() and g.game_state is not 'exit':
-	#render the screen
-	display.render_all()
+    # render the screen
+    display.render_all()
 
-	#step to next round
-	player_action = Ticker.ticker.next_turn()
-	if player_action == 'exit': g.game_state = 'exit'
+    # step to next round
+    player_action = Ticker.ticker.next_turn()
+    if player_action == 'exit':
+        g.game_state = 'exit'
