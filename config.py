@@ -1,3 +1,5 @@
+from utility import enum
+
 # actual size of the window
 SCREEN_WIDTH = 80
 SCREEN_HEIGHT = 50
@@ -17,7 +19,7 @@ def exp_xp_curve(level):
     from math import exp
     return exp(level) * 5
 
-#character generation values
+# character generation values
 DEFAULT_SPEED = 10
 DEFAULT_XP_CURVE = exp_xp_curve
 
@@ -28,11 +30,5 @@ FIRE = 3
 
 aspects = ["AIR", "WATER", "EARTH", "FIRE"]  # clockwise from air
 factors = [(1,1), (1,-1), (-1,-1), (-1,1)]  # (hot_cold, wet_dry), where hot and wet are positive.
-
-
-def enum(*sequential, **named):
-    """"Used for enumeration of variables. Usage is, e.g.: Numbers = enum('ZERO', 'ONE', 'TWO')"""
-    enums = dict(zip(sequential, range(len(sequential))), **named)
-    return type('Enum', (), enums)
 
 tile_types = enum("CAVE_FLOOR", "CAVE_WALL", "GRASS", "SAND", "SHALLOW_WATER", "DEEP_WATER")

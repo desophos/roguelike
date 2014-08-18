@@ -1,6 +1,6 @@
 from Spell import *
 import Effect
-import inspect
+from utility import classes_to_dict
 import sys
 
 
@@ -38,16 +38,5 @@ class Hold(Spell):
                        desc="Engulf an enemy's legs with the ground below them, preventing movement.", target_type='enemy', max_range=5,
                        use_classes=[Effect.Hold])
 
-current_module = sys.modules[__name__]
-# get all classes in this modules, including imported ones
-all_classes = inspect.getmembers(current_module, inspect.isclass)
-# so all_classes is a list of (name, value) tuples
 
-# get only those classes defined in this module
-spells = []
-for i in all_classes:
-    if inspect.getmodule(i[1]) == current_module:
-        spells.append(i)
-
-# then dict() that list of tuples to get a dictionary of "Item":Item key/value pairs. Bam.
-all_spells = dict(spells)
+all_spells = classes_to_dict(sys.modules[__name__])

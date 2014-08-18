@@ -148,10 +148,7 @@ def generate_map(which_kind):
 g.actors.append(Object.player)
 
 # generate map (at this point it's not drawn to the screen)
-starting_point = generate_map("dungeon")
-
-Object.player.x = starting_point[0]  # MAP_WIDTH / 2
-Object.player.y = starting_point[1]  # MAP_HEIGHT / 2
+Object.player.x, Object.player.y = generate_map("dungeon")
 
 block_map = [[False for x in range(MAP_WIDTH)] for y in range(MAP_HEIGHT)]
 block_sight_map = [[False for x in range(MAP_WIDTH)] for y in range(MAP_HEIGHT)]

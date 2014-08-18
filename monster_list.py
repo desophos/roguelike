@@ -1,6 +1,6 @@
 from Object import NPC, Combatant
+from utility import classes_to_dict
 import AI
-import inspect
 import libtcodpy as libtcod
 import sys
 
@@ -18,16 +18,4 @@ class Troll(NPC):
                      combatant = Combatant(hp=16, defense=1, power=4, death_xp=10, death_function=NPC.death),
                      ai = AI.BasicMonster())
 
-current_module = sys.modules[__name__]
-# get all classes in this modules, including imported ones
-all_classes = inspect.getmembers(current_module, inspect.isclass)
-# so all_classes is a list of (name, value) tuples
-
-# get only those classes defined in this module
-monsters = []
-for i in all_classes:
-    if inspect.getmodule(i[1]) == current_module:
-        monsters.append(i)
-
-# then dict() that list of tuples to get a dictionary of "Monster":Monster key/value pairs. Bam.
-bestiary = dict(monsters)
+bestiary = classes_to_dict(sys.modules[__name__])

@@ -3,6 +3,8 @@ libtcodpy.py
 libtcod.so
 *.png
 .metadata
+*.sublime-project
+*.sublime-workspace
 
 # C extensions
 *.so
