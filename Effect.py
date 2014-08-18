@@ -8,7 +8,8 @@ class Effect:
     such as healing, protection, special attacks, etc.
     The target will not be defined until usage.
     Effect strength is defined at usage time in Usable.use()."""
-    def __init__(self, turns=0, speed=DEFAULT_SPEED, subject=None, helper='is', verb=None, prep='for', num=None, noun=None):
+    def __init__(self, turns=0, speed=DEFAULT_SPEED, subject=None, helper='is',
+                 verb=None, prep='for', num=None, noun=None):
         self.ticker = Ticker.ticker
         self.target = None
         self.turns = turns
@@ -33,7 +34,8 @@ class Effect:
         if self.turn_counter:
             self.ticker.schedule_turn(self.speed, self)
 
-        if self.noun == "turns":  # update the number of turns left as they elapse
+        if self.noun == "turns":
+            # update the number of turns left as they elapse
             self.number = self.turn_counter
 
         if self.target:
@@ -48,13 +50,16 @@ class Effect:
             if self.subject[0:4] != "The ":  # quickfix
                 self.subject = "The " + self.subject
 
-            self.words = [self.subject, self.helper_verb, self.verb, self.preposition, self.number, self.noun]
+            self.words = [self.subject, self.helper_verb, self.verb,
+                          self.preposition, self.number, self.noun]
             self.use_msg = ""
 
+            # add all the words together, separated with spaces
             for word in self.words:
                 if word:
-                    self.use_msg += str(word) + " "  # add all the words together, separated with spaces
-            self.use_msg = self.use_msg[:-1] + "."  # remove space at the end and add a full stop
+                    self.use_msg += str(word) + " "
+            # remove space at the end and add a period
+            self.use_msg = self.use_msg[:-1] + "."
 
             if self.turn_counter:
                 if self.owner.targeter.target_type == 'tile':
@@ -77,8 +82,10 @@ class Effect:
 
 
 class ChangePoints(Effect):
-    """Changes some point value over some amount of time. Instant by default."""
-    def __init__(self, turns=1, speed=DEFAULT_SPEED, verb=None, num=None, noun=None):
+    """Changes some point value over some amount of time.
+    Instant by default."""
+    def __init__(self, turns=1, speed=DEFAULT_SPEED, verb=None, num=None,
+                 noun=None):
         Effect.__init__(self, turns, speed, verb=verb, num=num, noun=noun)
 
     def do_turn(self):
@@ -90,7 +97,8 @@ class ChangePoints(Effect):
 
 class ChangeHP(ChangePoints):
     def __init__(self, turns=1, speed=DEFAULT_SPEED, verb=None, num=None):
-        ChangePoints.__init__(self, turns=turns, speed=speed, verb=verb, num=num, noun="HP")
+        ChangePoints.__init__(self, turns=turns, speed=speed, verb=verb,
+                              num=num, noun="HP")
         # we don't want to schedule a turn until we actually are used
 
     def do_turn(self):
@@ -107,7 +115,9 @@ class DamageHP(ChangeHP):
         ChangeHP.do_turn(self)
         if self.target:
             if self.target.combatant:
-                self.target.combatant.change_hp(self.owner.owner, -self.strength)
+                self.target.combatant.change_hp(
+                    self.owner.owner, -self.strength
+                )
 
 
 class HealHP(ChangeHP):
@@ -120,12 +130,15 @@ class HealHP(ChangeHP):
         ChangeHP.do_turn(self)
         if self.target:
             if self.target.combatant:
-                self.target.combatant.change_hp(self.owner.owner, self.strength)
+                self.target.combatant.change_hp(
+                    self.owner.owner, self.strength
+                )
 
 
 class ChangeMP(ChangePoints):
     def __init__(self, turns=1, speed=DEFAULT_SPEED, verb=None, num=None):
-        ChangePoints.__init__(self, turns=turns, speed=speed, verb=verb, num=num, noun="MP")
+        ChangePoints.__init__(self, turns=turns, speed=speed, verb=verb,
+                              num=num, noun="MP")
 
     def do_turn(self):
         ChangePoints.do_turn(self)
@@ -171,7 +184,8 @@ class Hold(Effect):
 
     def do_turn(self):
         if self.target:
-            self.speed = self.target.speed  # counts down one turn for each turn the held character takes
+            # counts down one turn for each turn the held character takes
+            self.speed = self.target.speed
             self.target.held = True
         Effect.do_turn(self)
 
@@ -186,7 +200,8 @@ class AbsorbHumours(Effect):
     def __init__(self, turns=1, verb=None):
         if not verb:
             verb = "absorbs humours"
-        Effect.__init__(self, turns=turns, helper=None, verb=verb, prep="from", noun="the terrain")
+        Effect.__init__(self, turns=turns, helper=None, verb=verb, prep="from",
+                        noun="the terrain")
 
     def do_turn(self):
         import globals as g
@@ -210,10 +225,14 @@ class AbsorbHumours(Effect):
                 user.base_wet_dry += wet_dry_gain
 
                 if hot_cold_gain > 0:
-                    display.message(self.owner.owner.name + " feels " + str(hot_cold_gain) + " degrees warmer.")
+                    display.message(self.owner.owner.name + " feels " +
+                                    str(hot_cold_gain) + " degrees warmer.")
                 elif hot_cold_gain < 0:
-                    display.message(self.owner.owner.name + " feels " + str(abs(hot_cold_gain)) + " degrees colder.")
+                    display.message(self.owner.owner.name + " feels " +
+                                    str(abs(hot_cold_gain)) + " degrees colder.")
                 if wet_dry_gain > 0:
-                    display.message(self.owner.owner.name + " feels " + str(wet_dry_gain) + "% wetter.")
+                    display.message(self.owner.owner.name + " feels " +
+                                    str(wet_dry_gain) + "% wetter.")
                 elif wet_dry_gain < 0:
-                    display.message(self.owner.owner.name + " feels " + str(abs(wet_dry_gain)) + "% drier.")
+                    display.message(self.owner.owner.name + " feels " +
+                                    str(abs(wet_dry_gain)) + "% drier.")

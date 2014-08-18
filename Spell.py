@@ -18,18 +18,26 @@ class SpellBook(AbilityManager):
             self.elements[key].calc_power()
 
     def choice_menu(self):
-        return AbilityManager.choice_menu(self, "Press a letter to cast a spell:", "You know no spells.")
+        return AbilityManager.choice_menu(self,
+                                          "Press a letter to cast a spell:",
+                                          "You know no spells.")
 
 
 class Spell(Ability):
-    def __init__(self, owner, name, power=0, turns=1, mp_cost=0, aspect=None, desc="", effect_verb=None, target_type=None, max_range=None, use_classes=None):
+    def __init__(self, owner, name, power=0, turns=1, mp_cost=0, aspect=None,
+                 desc="", effect_verb=None, target_type=None, max_range=None,
+                 use_classes=None):
         self.power = power  # used as base strength
         self.mp_cost = mp_cost
         self.aspect = aspect
         verb = "casts"
         noun = name
-        #self.info_to_display = ["Base power: " + str(self.power), "MP cost: " + str(self.mp_cost)]
-        Ability.__init__(self, owner=owner, strength=power, turns=turns, name=name, verb=verb, noun=noun, effect_verb=effect_verb, target_type=target_type, max_range=max_range, use_classes=use_classes)
+        #self.info_to_display = ["Base power: " + str(self.power),
+        #                        "MP cost: " + str(self.mp_cost)]
+        Ability.__init__(self, owner=owner, strength=power, turns=turns,
+                         name=name, verb=verb, noun=noun,
+                         effect_verb=effect_verb, target_type=target_type,
+                         max_range=max_range, use_classes=use_classes)
 
     def power_formula(self, factors):
         power = self.power

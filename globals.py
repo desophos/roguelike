@@ -1,19 +1,19 @@
 import libtcodpy as libtcod
 
-#map of the current level
+# map of the current level
 level_map = []
-#all actors
+# all actors
 actors = []
-#items on ground
+# items on ground
 items = []
-#features on tiles, such as trees
+# features on tiles, such as trees
 terrain_features = []
-#list of game messages and their colors
+# list of game messages and their colors
 game_msgs = []
-
-fov_recompute = True
-game_state = "playing"
 
 # libtcod event holders
 key_event_structure = libtcod.Key()
 mouse_event_structure = libtcod.Mouse()
+
+fov_recompute = True
+game_state = "playing"

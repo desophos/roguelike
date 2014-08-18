@@ -10,7 +10,8 @@ import math
 class Object:
     # this is a generic object: the player, a monster, an item, the stairs...
     # it's always represented by a character on screen.
-    def __init__(self, x, y, char, name, color, blocks=False, blocks_sight=False):
+    def __init__(self, x, y, char, name, color, blocks=False,
+                 blocks_sight=False):
         self.x = x
         self.y = y
         self.char = char
@@ -71,7 +72,8 @@ class Object:
         return math.sqrt((x - self.x) ** 2 + (y - self.y) ** 2)
 
     def send_to_back(self):
-        # make this object be drawn first, so all others appear above it if they're in the same tile.
+        # make this object be drawn first, so all others appear above it
+        # if they're in the same tile.
         if self in g.actors:
             g.actors.remove(self)
             g.actors.insert(0, self)
@@ -82,24 +84,31 @@ class Object:
     def draw(self):
         # only show if it's visible to the player
         if libtcod.map_is_in_fov(display.fov_map, self.x, self.y):
-            # set the color and then draw the character that represents this object at its position
+            # set the color and then draw the character
+            # that represents this object at its position
             libtcod.console_set_default_foreground(display.con, self.color)
-            libtcod.console_put_char(display.con, self.x, self.y, self.char, libtcod.BKGND_NONE)
+            libtcod.console_put_char(display.con, self.x, self.y, self.char,
+                                     libtcod.BKGND_NONE)
 
     def clear(self):
         # erase the character that represents this object
-        libtcod.console_put_char(display.con, self.x, self.y, ' ', libtcod.BKGND_NONE)
+        libtcod.console_put_char(display.con, self.x, self.y, ' ',
+                                 libtcod.BKGND_NONE)
 
 
 class TerrainFeature(Object):
-    def __init__(self, x, y, char, name, color, blocks_sight=False, hot_cold=0, wet_dry=0):
+    def __init__(self, x, y, char, name, color, blocks_sight=False,
+                 hot_cold=0, wet_dry=0):
         self.hot_cold = hot_cold
         self.wet_dry = wet_dry
-        Object.__init__(self, x, y, char, name, color, blocks=True, blocks_sight=blocks_sight)
+        Object.__init__(self, x, y, char, name, color, blocks=True,
+                        blocks_sight=blocks_sight)
 
 
 class Character(Object):
-    def __init__(self, x, y, char, name, color, level=1, xp=0, xp_curve=DEFAULT_XP_CURVE, blocks=True, blocks_sight=False, speed=DEFAULT_SPEED, inventory=None, skills=None,
+    def __init__(self, x, y, char, name, color, level=1, xp=0,
+                 xp_curve=DEFAULT_XP_CURVE, blocks=True, blocks_sight=False,
+                 speed=DEFAULT_SPEED, inventory=None, skills=None,
                  combatant=None, caster=None, ai=None):
         import Item
         import Ability
@@ -113,7 +122,8 @@ class Character(Object):
         self.inventory = inventory or Item.Inventory(self, {})
         self.skills = skills or Ability.AbilityManager(self, {})
 
-        Object.__init__(self, x=x, y=y, char=char, name=name, color=color, blocks=blocks, blocks_sight=blocks_sight)
+        Object.__init__(self, x=x, y=y, char=char, name=name, color=color,
+                        blocks=blocks, blocks_sight=blocks_sight)
 
         # assign components and tell them their owner
 
@@ -145,9 +155,15 @@ class Character(Object):
 
 
 class NPC(Character):
-    def __init__(self, x, y, char, name, color, level=1, xp=0, xp_curve=DEFAULT_XP_CURVE, blocks=True, blocks_sight=False, speed=DEFAULT_SPEED, inventory=None, skills=None,
+    def __init__(self, x, y, char, name, color, level=1, xp=0,
+                 xp_curve=DEFAULT_XP_CURVE, blocks=True, blocks_sight=False,
+                 speed=DEFAULT_SPEED, inventory=None, skills=None,
                  combatant=None, caster=None, ai=None):
-        Character.__init__(self, x=x, y=y, char=char, name=name, color=color, level=level, xp=xp, xp_curve=xp_curve, blocks=blocks, blocks_sight=blocks_sight, speed=speed, inventory=inventory, skills=skills, combatant=combatant, caster=caster, ai=ai)
+        Character.__init__(self, x=x, y=y, char=char, name=name, color=color,
+                           level=level, xp=xp, xp_curve=xp_curve,
+                           blocks=blocks, blocks_sight=blocks_sight,
+                           speed=speed, inventory=inventory, skills=skills,
+                           combatant=combatant, caster=caster, ai=ai)
 
     def death(self, killer):
         # transform it into a nasty corpse!
@@ -169,8 +185,10 @@ class Player(Character):
         from spell_list import all_spells
         from Skill import SkillManager
         from skill_list import all_skills
-        Character.__init__(self, x=x, y=y, char='@', name='player', color=libtcod.white,
-                           combatant=Combatant(hp=30, defense=2, power=5, death_function=self.death),
+        Character.__init__(self, x=x, y=y, char='@', name='player',
+                           color=libtcod.white,
+                           combatant=Combatant(hp=30, defense=2, power=5,
+                                               death_function=self.death),
                            caster=Caster(mp=30, hot_cold=0, wet_dry=0))
         player_spellbook = SpellBook(self, all_spells)
         player_skills = SkillManager(self, all_skills)
@@ -218,9 +236,13 @@ class Player(Character):
         'exit': exit game
         """
         libtcod.console_flush()
-        libtcod.sys_check_for_event(libtcod.EVENT_MOUSE | libtcod.EVENT_KEY_PRESS, g.key_event_structure, g.mouse_event_structure)
+        libtcod.sys_check_for_event(
+            libtcod.EVENT_MOUSE | libtcod.EVENT_KEY_PRESS,
+            g.key_event_structure, g.mouse_event_structure
+        )
 
-        if g.key_event_structure.vk == libtcod.KEY_ENTER and g.key_event_structure.lalt:
+        if g.key_event_structure.vk == libtcod.KEY_ENTER \
+                and g.key_event_structure.lalt:
             # Alt+Enter: toggle fullscreen
             libtcod.console_set_fullscreen(not libtcod.console_is_fullscreen())
 
@@ -249,12 +271,14 @@ class Player(Character):
             drop_key = ['d']
             char_screen_key = ['c']
 
-            movement_keys = up + upleft + left + downleft + down + downright + right + upright
+            movement_keys = up + upleft + left + downleft + \
+                            down + downright + right + upright
 
             if switch_key(movement_keys):  # player tries to move
                 if self.held:
                     print "You're held in place; you can't move."
-                    return False  # trying to move shouldn't take a turn if it fails
+                    # trying to move shouldn't take a turn if it fails
+                    return False
 
                 if   switch_key(up):        return self.move_or_attack( 0, -1)
                 elif switch_key(upleft):    return self.move_or_attack(-1, -1)
@@ -270,7 +294,8 @@ class Player(Character):
 
                 if key_char in pickup_key:
                     # pick up an item
-                    for item in g.items:  # look for an item in the player's tile
+                    for item in g.items:
+                        # look for an item in the player's tile
                         if item.x == self.x and item.y == self.y:
                             item.pick_up(self)
                             break
@@ -287,7 +312,9 @@ class Player(Character):
                     chosen_spell = self.caster.spellbook.choice_menu()
                     if chosen_spell is not None:
                         if (self.caster.mp - chosen_spell.mp_cost) < 0:
-                            display.message("You don't have enough MP to cast that spell.", libtcod.pink)
+                            display.message(
+                                "You don't have enough MP to cast that spell.",
+                                libtcod.pink)
                         else:
                             if self.caster.cast_spell(chosen_spell):
                                 return True
@@ -308,7 +335,9 @@ class Player(Character):
                     # show the character screen
                     display.char_info_window(self)
                     # wait for keypress
-                    libtcod.sys_wait_for_event(libtcod.KEY_PRESSED, g.key_event_structure, g.mouse_event_structure, True)
+                    libtcod.sys_wait_for_event(libtcod.KEY_PRESSED,
+                                               g.key_event_structure,
+                                               g.mouse_event_structure, True)
 
                 return False
 
@@ -337,10 +366,12 @@ class Combatant:
 
         if damage > 0:
             # make the target take some damage
-            message(self.owner.name.capitalize() + ' attacks ' + target.name + ' for ' + str(damage) + ' hit points.')
+            message(self.owner.name.capitalize() + ' attacks ' + target.name \
+                    + ' for ' + str(damage) + ' hit points.')
             target.combatant.change_hp(self.owner, -damage)
         else:
-            message(self.owner.name.capitalize() + ' attacks ' + target.name + ' but it has no effect!')
+            message(self.owner.name.capitalize() + ' attacks ' + target.name \
+                    + ' but it has no effect!')
 
     def change_hp(self, attacker, amount):
         self.hp += amount
@@ -362,13 +393,15 @@ class Combatant:
 
     def death(self, killer):
         display.message("The " + self.owner.name + " is dead.", libtcod.orange)
-        display.message("The " + killer.name + " gains " + str(self.death_xp) + " XP.", libtcod.light_violet)
+        display.message("The " + killer.name + " gains " + str(self.death_xp) \
+                        + " XP.", libtcod.light_violet)
         killer.xp += self.death_xp
 
 
 class Caster:
     # spellcasting-related properties and methods
-    def __init__(self, mp=20, hot_cold=0, wet_dry=0, max_factor=10, osmosis_range=0, spellbook=None):
+    def __init__(self, mp=20, hot_cold=0, wet_dry=0, max_factor=10,
+                 osmosis_range=0, spellbook=None):
         from Spell import SpellBook
         self.mp = mp
         self.max_mp = mp

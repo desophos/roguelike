@@ -15,13 +15,16 @@ Terrain-based:
     e.g. standing in water enables certain water-based spells, empowers others
     Casters can absorb energy from the terrain around them to alter their Factors
     Able to change environment to suit your needs
-Using a spell of a certain aspect raises the user's proficiency in the factors of that aspect.
+Using a spell of a certain aspect raises the user's proficiency
+    in the factors of that aspect.
 This encourages specialization without removing choice.
-Player takes a personality test to determine their initial Factors, which determine their initial Aspect.
+Player takes a personality test to determine their initial Factors,
+    which determine their initial Aspect.
 """
 """NOTES ON ALCHEMY:
 
-quintessence (aether/void), the fifth element, is incorruptible, unchangeable, non-matter, beyond material world
+quintessence (aether/void), the fifth element, is incorruptible, unchangeable,
+    non-matter, beyond material world
 
 From Aristotle:
 Air is primarily wet and secondarily hot.
@@ -44,10 +47,13 @@ Phlegm      winter  water   brain/lungs cold & wet  phlegmatic      rational    
 
 Historically, bodily problems were caused by an imbalance of the humours.
 However, an imbalance of the humours is required for magic.
-So mages are prone to bodily problems, i.e. illness. Therefore they are sickly and fragile.
+So mages are prone to bodily problems, i.e. illness.
+    Therefore they are sickly and fragile.
 Magic is nature's way of siphoning excess humours.
-Unfortunately, this results in the most imbalanced people having the most power, which is extremely dangerous for everyone else.
-Aspects might correspond to different types of mental imbalance, i.e. insanity. Exaggerate personality traits?
+Unfortunately, this results in the most imbalanced people having
+    the most power, which is extremely dangerous for everyone else.
+Aspects might correspond to different types of mental imbalance, i.e. insanity.
+    Exaggerate personality traits?
 
 Use Keirsey's extension of Plato's temperament theory:
 http://en.wikipedia.org/wiki/Keirsey_Temperament_Sorter
@@ -65,7 +71,8 @@ Opposite pairs: fire/water, air/earth.
 This forces exclusion of only one Aspect.
 
 Earth contains defensive spells and spells that decrease mobility.
-Water contains DoT spells, healing spells, and spells that promote consistency and sameness, i.e. dispel and equalizers.
+Water contains DoT spells, healing spells, and spells
+    that promote consistency and sameness, i.e. dispel and equalizers.
 Air contains quick attacks and spells that enhance mobility.
 Fire contains offensive spells and those that enhance offensive capabilities.
 
@@ -85,7 +92,8 @@ Melancholic (earth):
 Phlegmatic (water):
 """
 """DEVELOPMENT STANDARDS:
-Characters own Usables. Usables own Effects. Characters own Targeters, but Effects have targets.
+Characters own Usables. Usables own Effects.
+Characters own Targeters, but Effects have targets.
 Use keyword arguments to make refactoring easier.
 """
 """TODO:
@@ -120,7 +128,8 @@ FEATURES TO IMPLEMENT:
 ***Passive skills
 ***Spell proficiency
 ***UsableManager.sort()
-***Graphical numerical displays (e.g. hovering XP, damage, etc. amounts over character on map)
+***Graphical numerical displays (e.g. hovering XP, damage, etc.
+                                 amounts over character on map)
 ***Graphical spell effects
 *****Extend Targeter class to be usable by NPCs
 **Add choice menu item information
@@ -150,8 +159,10 @@ g.actors.append(Object.player)
 # generate map (at this point it's not drawn to the screen)
 Object.player.x, Object.player.y = generate_map("dungeon")
 
-block_map = [[False for x in range(MAP_WIDTH)] for y in range(MAP_HEIGHT)]
-block_sight_map = [[False for x in range(MAP_WIDTH)] for y in range(MAP_HEIGHT)]
+block_map = [[False for x in range(MAP_WIDTH)]
+             for y in range(MAP_HEIGHT)]
+block_sight_map = [[False for x in range(MAP_WIDTH)]
+                   for y in range(MAP_HEIGHT)]
 
 objects = []
 objects.extend(g.actors)
@@ -170,7 +181,9 @@ for y in range(MAP_HEIGHT):
             block_map[y][x] = True
         if g.level_map[y][x].block_sight:
             block_sight_map[y][x] = True
-        libtcod.map_set_properties(display.fov_map, x, y, not block_sight_map[y][x], not block_map[y][x])
+        libtcod.map_set_properties(display.fov_map, x, y,
+                                   not block_sight_map[y][x],
+                                   not block_map[y][x])
 
 g.fov_recompute = True
 

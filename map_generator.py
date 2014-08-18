@@ -4,7 +4,7 @@ import globals as g
 import libtcodpy as libtcod
 import random
 
-#parameters for dungeon generator
+# parameters for dungeon generator
 BSP_RECURSE_LEVEL = 4
 ROOM_MAX_SIZE = 10
 ROOM_MIN_SIZE = 6
@@ -20,7 +20,8 @@ FOREST_SPARSENESS = 0.5
 noise2d_gen = libtcod.noise_new(2, 0.5, 2.0)
 noise_map = [
     [
-        libtcod.noise_get_fbm(noise2d_gen, [i / float(MAP_WIDTH), j / float(MAP_HEIGHT)], 32.0)
+        libtcod.noise_get_fbm(noise2d_gen, [i / float(MAP_WIDTH),
+                              j / float(MAP_HEIGHT)], 32.0)
         for i in range(MAP_WIDTH)
     ] for j in range(MAP_HEIGHT)
 ]  # map of actual fbm noise values
@@ -64,17 +65,24 @@ class Tile:
             self.block_sight = False
             self.color_in_FOV = libtcod.dark_sky
 
-        # the following assignments depend on assignments in the tile_type tests, so they come after the tests
+        # the following assignments depend on assignments
+        # in the tile_type tests, so they come after the tests
 
         # by default, a tile blocks sight if it is blocked and vice versa
         if self.block_sight is None:
             self.block_sight = self.blocked
 
-        # set tile color outside of FOV as desaturated and darker than color in FOV
+        # set tile color outside of FOV as desaturated
+        # and darker than color in FOV
         hsv = libtcod.color_get_hsv(self.color_in_FOV)  # returns [h,s,v]
-        # Colors are passed by reference, so we have to create a whole new Color object.
-        self.color_out_FOV = libtcod.Color(self.color_in_FOV.r, self.color_in_FOV.g, self.color_in_FOV.b)
-        libtcod.color_set_hsv(self.color_out_FOV, hsv[0], hsv[1] / 4, hsv[2] / 4)  # Desaturate and darken color (unseen by default)
+        # Colors are passed by reference,
+        # so we have to create a whole new Color object.
+        self.color_out_FOV = libtcod.Color(self.color_in_FOV.r,
+                                           self.color_in_FOV.g,
+                                           self.color_in_FOV.b)
+        # Desaturate and darken color (unseen by default)
+        libtcod.color_set_hsv(self.color_out_FOV,
+                              hsv[0], hsv[1] / 4, hsv[2] / 4)
 
 
 def generate_forest():
@@ -84,15 +92,21 @@ def generate_forest():
     forest_noise = [[0 for x in range(MAP_WIDTH)] for y in range(MAP_HEIGHT)]
 
     # make every tile grass
-    g.level_map = [[Tile(tile_types.GRASS) for x in range(MAP_WIDTH)] for y in range(MAP_HEIGHT)]
+    g.level_map = [[Tile(tile_types.GRASS) for x in range(MAP_WIDTH)]
+                   for y in range(MAP_HEIGHT)]
 
     for i in range(MAP_HEIGHT):
-        forest_noise[i] = map(lambda x: (1+x)/2, noise_map[i])  # expressed as percentage of maximum
+        # noise expressed as percentage of maximum
+        forest_noise[i] = map(lambda x: (1+x)/2, noise_map[i])
     for y in range(MAP_HEIGHT):
         for x in range(MAP_WIDTH):
             p = random.random()
             if p < float(FOREST_SPARSENESS * forest_noise[y][x]):
-                g.terrain_features.append(TerrainFeature(x, y, 'T', 'tree', libtcod.darkest_green, blocks_sight=True))
+                g.terrain_features.append(
+                    TerrainFeature(x, y, 'T', 'tree',
+                                   libtcod.darkest_green,
+                                   blocks_sight=True)
+                )
 
 
 def generate_river():
@@ -109,9 +123,12 @@ def generate_river():
     def river_cost(xFrom, yFrom, xTo, yTo, river_noise):
         return river_noise[yTo][xTo]
 
-    path = libtcod.path_new_using_function(MAP_WIDTH, MAP_HEIGHT, river_cost, river_noise)
-    # wish I could just use (lambda xFrom, yFrom, xTo, yTo, river_noise: river_noise[xTo][yTo])
-    libtcod.path_compute(path, river_start_x, river_start_y, river_end_x, river_end_y)
+    path = libtcod.path_new_using_function(MAP_WIDTH, MAP_HEIGHT,
+                                           river_cost, river_noise)
+    # wish I could just use
+    # (lambda xFrom, yFrom, xTo, yTo, river_noise: river_noise[xTo][yTo])
+    libtcod.path_compute(path, river_start_x, river_start_y,
+                         river_end_x, river_end_y)
 
     while not libtcod.path_is_empty(path):
         x, y = libtcod.path_walk(path, True)
@@ -220,15 +237,20 @@ def generate_dungeon():
         for y in range(MAP_HEIGHT)
     ]
 
-    # First, we create the root node of the tree. This node encompasses the whole rectangular region.
+    # First, we create the root node of the tree.
+    # This node encompasses the whole rectangular region.
     # bsp_new_with_size(x,y,w,h)
     my_bsp = libtcod.bsp_new_with_size(0, 0, MAP_WIDTH - 1, MAP_HEIGHT - 1)
 
-    # Once we have the root node, we split it into smaller non-overlapping nodes.
-    # bsp_split_recursive(node, randomizer, num_recursive_levels, minHSize, minVSize, maxHRatio, maxVRatio)
-    libtcod.bsp_split_recursive(my_bsp, 0, BSP_RECURSE_LEVEL, ROOM_MIN_SIZE, ROOM_MIN_SIZE, 1.5, 1.5)
+    # Once we have the root node, we split it
+    # into smaller non-overlapping nodes.
+    #bsp_split_recursive(node, randomizer, num_recursive_levels, minHSize,
+    #                    minVSize, maxHRatio, maxVRatio)
+    libtcod.bsp_split_recursive(my_bsp, 0, BSP_RECURSE_LEVEL,
+                                ROOM_MIN_SIZE, ROOM_MIN_SIZE, 1.5, 1.5)
 
-    # Then we change each leaf to a room and connect each subdivision with tunnels.
+    # Then we change each leaf to a room
+    # and connect each subdivision with tunnels.
     libtcod.bsp_traverse_inverted_level_order(my_bsp, bsp_leaf_create_room)
     libtcod.bsp_traverse_level_order(my_bsp, bsp_leaf_create_tunnel)
 
@@ -263,13 +285,15 @@ def bsp_leaf_create_room(node, data):
     new_room = Room(new_x, new_y, new_w, new_h)
 
     # append the new room to the list of rooms
-    # if this is the first room (rooms doesn't exist), create rooms = [new_room]
+    # if this is the first room (rooms doesn't exist),
+    # then create rooms = [new_room]
     try:
         rooms.append(new_room)
     except NameError:
         rooms = [new_room]
 
-    # We don't need to test for intersection because each leaf contains exactly one room.
+    # We don't need to test for intersection
+    # because each leaf contains exactly one room.
 
     # "paint" the room to the map's tiles
     # go through the tiles in the rectangle and make them passable
@@ -313,7 +337,8 @@ def bsp_leaf_create_tunnel(node, data):
 
 
 def place_objects(room):
-    from monster_list import bestiary  # make sure we don't accidentally change these
+    # make sure we don't accidentally change these
+    from monster_list import bestiary
     from item_list import all_items
 
     #choose random number of monsters
@@ -326,7 +351,8 @@ def place_objects(room):
 
         #only place it if the tile is not blocked
         if not Object.is_blocked(x, y):
-            if libtcod.random_get_int(0, 0, 100) < 80:  # 80% chance of getting an orc
+            # 80% chance of getting an orc
+            if libtcod.random_get_int(0, 0, 100) < 80:
                 #create an orc
                 monster = bestiary["Orc"](x=x, y=y)
             else:

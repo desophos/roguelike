@@ -10,7 +10,9 @@ class Ticker:
 
     def __init__(self):
         self.ticks = 0  # current ticks--sys.maxint is 2147483647
-        self.schedule = {}  # this is the dict of things to do {ticks: [obj1, obj2, ...], ticks+1: [...], ...}
+        # schedule is the dict of things to do
+        # {ticks: [obj1, obj2, ...], ticks+1: [...], ...}
+        self.schedule = {}
 
     def schedule_turn(self, interval, obj):
         self.schedule.setdefault(self.ticks + interval, []).append(obj)

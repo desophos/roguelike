@@ -48,26 +48,35 @@ class Inventory(UsableManager):
 class Item(Object.Object, Usable):
     """An item that can be picked up and used.
     The 'use_class' contains attributes and methods that affect the target."""
-    def __init__(self, x, y, char, name, color, strength=0, verb='uses', noun=None, use_msg=None, effect_verb=None, target_type='self', max_range=None, use_classes=None):
+    def __init__(self, x, y, char, name, color, strength=0, verb='uses',
+                 noun=None, use_msg=None, effect_verb=None, target_type='self',
+                 max_range=None, use_classes=None):
         Object.Object.__init__(self, x, y, char, name, color)
         noun = 'the ' + self.name
         self.quantity = 0
-        Usable.__init__(self, strength=strength, verb=verb, noun=noun, use_msg=use_msg, effect_verb=effect_verb, target_type=target_type, max_range=max_range, use_classes=use_classes)
+        Usable.__init__(self, strength=strength, verb=verb, noun=noun,
+                        use_msg=use_msg, effect_verb=effect_verb,
+                        target_type=target_type, max_range=max_range,
+                        use_classes=use_classes)
 
     def pick_up(self, character):
         # add to player's inventory and remove from the map
-        if character == Object.player and len(character.inventory.elements) >= 26:
-            display.message('Your inventory is full, cannot pick up ' + self.name + '.', libtcod.red)
+        if character == Object.player \
+                and len(character.inventory.elements) >= 26:
+            display.message('Your inventory is full, cannot pick up ' +
+                            self.name + '.', libtcod.red)
         else:
             character.inventory.add(self)
             self.owner = character
             self.targeter.owner = character
             g.items.remove(self)
             if character == Object.player:
-                display.message('You picked up a ' + self.name + '!', libtcod.green)
+                display.message('You picked up a ' +
+                                self.name + '!', libtcod.green)
 
     def drop(self):
-        # add to the map and remove from the player's inventory. also, place it at the player's coordinates
+        # add to the map and remove from the player's inventory.
+        # also, place it at the player's coordinates
         self.owner.inventory.remove(self)
         g.items.append(self)
         self.x = self.owner.x
@@ -87,5 +96,6 @@ class Item(Object.Object, Usable):
             if result:
                 self.quantity -= 1
                 if self.quantity <= 0:
-                    self.owner.inventory.remove(self)  # destroy after use, unless it was cancelled for some reason
+                    # destroy after use, unless it was cancelled for some reason
+                    self.owner.inventory.remove(self)
             return result

@@ -7,7 +7,9 @@ SPELLBOOK_WIDTH = 50
 
 
 class Usable:
-    def __init__(self, owner=None, strength=None, turns=1, verb="uses", noun="a thing", use_msg=None, effect_verb=None, target_type=None, max_range=None, use_classes=None):
+    def __init__(self, owner=None, strength=None, turns=1, verb="uses",
+                 noun="a thing", use_msg=None, effect_verb=None,
+                 target_type=None, max_range=None, use_classes=None):
         self.owner = owner
         self.strength = strength
         self.turns = turns  # instant by default
@@ -36,7 +38,8 @@ class Usable:
                     new_effect_verb = self.effect_verb[i]
                 else:
                     new_effect_verb = None
-                new_effect = usage(turns=self.turns, verb=new_effect_verb)  # initialize the use_class as a new Effect
+                # initialize the use_class as a new Effect
+                new_effect = usage(turns=self.turns, verb=new_effect_verb)
                 if self.strength:  # if strength is applicable
                     new_effect.strength = self.strength
                 new_effect.target = target
@@ -79,10 +82,12 @@ class UsableManager:
             options = [err_msg]
         else:
             # correspond the order of params to the order of options
-            ordered_elements = [element for element in self.elements.itervalues()]
+            ordered_elements = [element for element
+                                in self.elements.itervalues()]
             options = [element.name for element in ordered_elements]
             for param in params:  # currently supports only one param
-                ordered_params = [eval("element."+param) for element in ordered_elements]
+                ordered_params = [eval("element."+param) for element
+                                  in ordered_elements]
         display.menu(header, options, width, ordered_params)
 
         key = libtcod.console_wait_for_keypress(True)

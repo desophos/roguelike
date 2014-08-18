@@ -29,6 +29,8 @@ EARTH = 2
 FIRE = 3
 
 aspects = ["AIR", "WATER", "EARTH", "FIRE"]  # clockwise from air
-factors = [(1,1), (1,-1), (-1,-1), (-1,1)]  # (hot_cold, wet_dry), where hot and wet are positive.
+# (hot_cold, wet_dry), where hot and wet are positive
+factors = [(1,1), (1,-1), (-1,-1), (-1,1)]
 
-tile_types = enum("CAVE_FLOOR", "CAVE_WALL", "GRASS", "SAND", "SHALLOW_WATER", "DEEP_WATER")
+tile_types = enum("CAVE_FLOOR", "CAVE_WALL", "GRASS",
+                  "SAND", "SHALLOW_WATER", "DEEP_WATER")
